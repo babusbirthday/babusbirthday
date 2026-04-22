@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Happy Birthday Babu!</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&family=Quicksand:wght@400;600&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Quicksand', sans-serif; background: linear-gradient(135deg, #fff5f7 0%, #fce4ec 100%); }
+        .cursive { font-family: 'Dancing Script', cursive; }
+        .glass { background: rgba(255, 255, 255, 0.7); backdrop-filter: blur(10px); border: 1px solid rgba(255, 255, 255, 0.3); }
+        .heart-float { animation: float 3s ease-in-out infinite; }
+        @keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
+        .hidden-content { display: none; }
+        #surprise-img {
+            width: 100%;
+            max-width: 500px;
+            aspect-ratio: 1 / 1;
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col items-center justify-center p-6 text-pink-600">
+
+    <div class="fixed top-10 left-10 text-4xl opacity-30 heart-float">🌸</div>
+    <div class="fixed bottom-10 right-10 text-4xl opacity-30 heart-float" style="animation-delay: 1s;">✨</div>
+
+    <main id="main-card" class="w-full max-w-md glass rounded-[2rem] p-8 shadow-xl text-center z-10">
+        
+        <div id="countdown-section">
+            <h2 class="text-2xl font-bold mb-2">Counting down to</h2>
+            <h1 class="cursive text-4xl mb-6">Babu's Birthday Day</h1>
+            
+            <div class="grid grid-cols-4 gap-2 mb-8">
+                <div class="bg-white p-3 rounded-2xl shadow-sm">
+                    <div id="days" class="text-2xl font-bold">00</div>
+                    <div class="text-xs uppercase">Days</div>
+                </div>
+                <div class="bg-white p-3 rounded-2xl shadow-sm">
+                    <div id="hours" class="text-2xl font-bold">00</div>
+                    <div class="text-xs uppercase">Hrs</div>
+                </div>
+                <div class="bg-white p-3 rounded-2xl shadow-sm">
+                    <div id="minutes" class="text-2xl font-bold">00</div>
+                    <div class="text-xs uppercase">Min</div>
+                </div>
+                <div class="bg-white p-3 rounded-2xl shadow-sm">
+                    <div id="seconds" class="text-2xl font-bold text-pink-400">00</div>
+                    <div class="text-xs uppercase">Sec</div>
+                </div>
+            </div>
+            <p class="text-pink-400 italic">I can't wait to celebrate your special day! 💞</p>
+        </div>
+
+        <div id="birthday-section" class="hidden-content animate-bounce">
+            <h1 class="cursive text-5xl mb-4">Happy Birthday! 🎂</h1>
+            <p class="text-lg leading-relaxed mb-6">
+                To my favorite person in the whole world, may your day be as beautiful and sweet as you are. I love you!
+            </p>
+        </div>
+
+        <div class="mt-8 border-t border-pink-100 pt-6">
+            
+            
+            <div id="surprise-display" class="mt-6 hidden-content opacity-0 transition-opacity duration-500">
+                <img id="surprise-img" src="" alt="Memory">
+                <p id="surprise-text" class="italic font-semibold"></p>
+            </div>
+
+            <button onclick="showSurprise()" class="bg-pink-400 hover:bg-pink-500 text-white font-bold py-3 px-8 rounded-full shadow-lg transform transition active:scale-95">
+                Click here 💖
+            </button>
+        </div>
+    </main>
+
+    <script>
+        // --- CONFIGURATION ---
+        const targetDate = new Date("April 29, 2026 00:00:00").getTime();
+        
+        const memories = [
+            { img: "/images/1.png", text: "" },
+            { img: "/images/2.png", text: "" },
+            { img: "/images/3.png", text: "" },
+            { img: "/images/4.png", text: "" },
+            { img: "/images/5.png", text: "" },
+            { img: "/images/6.png", text: "" },
+            { img: "/images/7.png", text: "" }
+        ];
+
+        // --- COUNTDOWN LOGIC ---
+        const timer = setInterval(function() {
+            const now = new Date().getTime();
+            const distance = targetDate - now;
+
+            const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+            const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+            const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+            const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+            document.getElementById("days").innerHTML = days;
+            document.getElementById("hours").innerHTML = hours;
+            document.getElementById("minutes").innerHTML = minutes;
+            document.getElementById("seconds").innerHTML = seconds;
+
+            if (distance < 0) {
+                clearInterval(timer);
+                launchBirthday();
+            }
+        }, 1000);
+
+        function launchBirthday() {
+            document.getElementById("countdown-section").classList.add("hidden-content");
+            document.getElementById("birthday-section").classList.remove("hidden-content");
+            
+            // Fireworks loop
+            var duration = 15 * 1000;
+            var animationEnd = Date.now() + duration;
+            var defaults = { startVelocity: 30, spread: 360, ticks: 60, zIndex: 0 };
+
+            var interval = setInterval(function() {
+                var timeLeft = animationEnd - Date.now();
+                if (timeLeft <= 0) return clearInterval(interval);
+                var particleCount = 50 * (timeLeft / duration);
+                confetti(Object.assign({}, defaults, { particleCount, origin: { x: Math.random(), y: Math.random() - 0.2 } }));
+            }, 250);
+        }
+
+        // --- SURPRISE BUTTON LOGIC ---
+        function showSurprise() {
+            const display = document.getElementById("surprise-display");
+            const img = document.getElementById("surprise-img");
+            const text = document.getElementById("surprise-text");
+            
+            const random = memories[Math.floor(Math.random() * memories.length)];
+            
+            display.classList.remove("hidden-content");
+            setTimeout(() => display.classList.add("opacity-100"), 10);
+            
+            img.src = random.img;
+            text.innerHTML = random.text;
+            
+            confetti({ particleCount: 40, spread: 70, origin: { y: 0.8 }, colors: ['#ff85a2', '#ffb3c1'] });
+        }
+    </script>
+</body>
+</html>
